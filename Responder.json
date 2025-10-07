@@ -1,0 +1,126 @@
+{
+  "name": "Sky Gardens Responder",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "contact-us",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -448,
+        -80
+      ],
+      "id": "888bd277-890a-4dd6-99f8-f9c4016deb03",
+      "name": "Webhook",
+      "webhookId": "aa56deef-d91e-4e35-9a28-ad688a84c1b4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an email automation agent integrated with a webhook system. You receive three inputs from the webhook:\n1. name - {{ $json.body.name }}\n2. email - {{ $json.body.email }}\n3. message - {{ $json.body.message }}\n\nYour task is to send two separate emails every time you receive this data:\n\n1. **Acknowledgment Email to the User**  \n   - Recipient: {{ $json.body.email }}\n   - Subject: Acknowledgment of Your Message  \n   - Body: Politely thank the user for submitting their message. Include their name and confirm that the message has been received successfully. Do not include any sensitive information. The tone should be professional, polite, and concise.\n\n2. **Notification Email to the Admin**  \n   - Recipient: hsumanthraj@gmail.com  \n   - Subject: New Message Received from a User  \n   - Body: Inform the admin that a new message has been received. Include the user's name, email address, and the actual message content. Keep the tone professional and clear.\n\nDo not ask the user for confirmation. Send both emails automatically once you receive the data. Ensure both emails are formatted with a proper subject and body and are ready to be sent.\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -224,
+        -80
+      ],
+      "id": "852fb445-31b6-4430-bed2-8ee51310e646",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        128
+      ],
+      "id": "71acdefd-1b69-409a-a7ed-431b29c9c522",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "JEPtW1xu8I06ME0j",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -80,
+        128
+      ],
+      "id": "f7720c8b-3013-42d8-a42f-b3765673d9a3",
+      "name": "Send a message in Gmail",
+      "webhookId": "8d20617c-6ef3-40c9-a7f1-22c4b6cb768e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Pnn2ogmeJyzTq131",
+          "name": "Gmail account 7"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "27a3f5fd-3a80-45c4-9705-5ce93418a4b2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eec7c57a4cf6d9d382a187bef3dd4a872dbf3b1b36e0facd1af32a51a8e9b1c3"
+  },
+  "id": "KVsDAn5oBgradYvd",
+  "tags": []
+}
